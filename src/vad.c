@@ -41,9 +41,12 @@ Features compute_features(const float *x, int N) {
    *
    * For the moment, compute random value between 0 and 1 
    */
+  const int fm=16000;
   Features feat;
   feat.p = compute_power(x,N);
-  return feat;
+  feat.zcr = compute_zcr(x,N,fm);
+  feat.am = compute_am(x,N);
+  return feat; 
 }
 
 /* 
@@ -77,7 +80,7 @@ unsigned int vad_frame_size(VAD_DATA *vad_data) {
  * using a Finite State Automata
  */
 
-VAD_STATE vad(VAD_DATA *vad_data, float *x, float alfa1) {
+VAD_STATE vad(VAD_DATA *vad_data, float *x, float alfa1, float alfa2, float alfa3) {
 
   /* 
    * TODO: You can change this, using your own features,
@@ -86,31 +89,33 @@ VAD_STATE vad(VAD_DATA *vad_data, float *x, float alfa1) {
 
   Features f = compute_features(x, vad_data->frame_length);
   vad_data->last_feature = f.p; /* save feature, in case you want to show */
-
+ 
   switch (vad_data->state) {
   case ST_INIT:
     vad_data->state = ST_SILENCE;
-    vad_data->p1 = f.p + alfa1;
+    vad_data->p1 = f.p+alfa1;
+    vad_data->p2 = f.am+alfa2;
+    vad_data->p3 = f.zcr+alfa3;
     break;
 
   case ST_SILENCE:
-    if (f.p > vad_data->p1) {
+    if (f.p > vad_data->p1 || ( f.am > vad_data->p2 && f.zcr > vad_data->p3)) {
       vad_data->state = ST_VOICE;
     }
     break;
 
   case ST_VOICE:
-    if (f.p < vad_data->p1) {
+    if (f.p < vad_data->p1 || ( f.am < vad_data->p2 && f.zcr < vad_data->p3)) {
       vad_data->state = ST_SILENCE;
     }
     break;
-
+    
   case ST_UNDEF:
     break;
   }
-
+    
   if (vad_data->state == ST_SILENCE ||
-      vad_data->state == ST_VOICE)
+      vad_data->state == ST_VOICE )
     return vad_data->state;
   else
     return ST_UNDEF;

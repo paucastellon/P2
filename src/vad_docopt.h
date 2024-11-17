@@ -17,6 +17,8 @@ typedef struct {
     int version;
     /* options with arguments */
     char *alfa1;
+    char *alfa2;
+    char *alfa3;
     char *input_wav;
     char *output_vad;
     char *output_wav;
@@ -37,7 +39,9 @@ const char help_message[] =
 "   -i FILE, --input-wav=FILE   WAVE file for voice activity detection\n"
 "   -o FILE, --output-vad=FILE  Label file with the result of VAD\n"
 "   -w FILE, --output-wav=FILE  WAVE file with silences cleared\n"
-"   -1 FLOAT, --alfa1=FLOAT     LLindar de detecció 1 [default: -42]\n"
+"   -1 FLOAT, --alfa1=FLOAT     LLindar de detecció 1 [default: 43]\n"
+"   -2 FLOAT, --alfa2=FLOAT     LLindar de detecció 2 [default: 0.0006]\n"
+"   -3 FLOAT, --alfa3=FLOAT     LLindar de detecció 3 [default: 800]\n"
 "   -v, --verbose  Show debug information\n"
 "   -h, --help     Show this screen\n"
 "   --version      Show the version of the project\n"
@@ -304,8 +308,8 @@ int elems_to_args(Elements *elements, DocoptArgs *args, bool help,
 
 DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
     DocoptArgs args = {
-        0, 0, 0, (char*) "-42", NULL, NULL, NULL,
-        usage_pattern, help_message
+        0, 0, 0, (char*) "43", (char*) "0.0006",(char*) "800", NULL,NULL,NULL,
+         usage_pattern, help_message
     };
     Tokens ts;
     Command commands[] = {
@@ -317,11 +321,13 @@ DocoptArgs docopt(int argc, char *argv[], bool help, const char *version) {
         {"-v", "--verbose", 0, 0, NULL},
         {NULL, "--version", 0, 0, NULL},
         {"-1", "--alfa1", 1, 0, NULL},
+        {"-2", "--alfa2", 1, 0, NULL},
+        {"-3", "--alfa3", 1, 0, NULL},
         {"-i", "--input-wav", 1, 0, NULL},
         {"-o", "--output-vad", 1, 0, NULL},
         {"-w", "--output-wav", 1, 0, NULL}
     };
-    Elements elements = {0, 0, 7, commands, arguments, options};
+    Elements elements = {0, 0, 9, commands, arguments, options};
 
     ts = tokens_new(argc, argv);
     if (parse_args(&ts, &elements))

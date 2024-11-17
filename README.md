@@ -135,32 +135,53 @@ Ejercicios
 - Etiquete manualmente los segmentos de voz y silencio del fichero grabado al efecto. Inserte, a 
   continuación, una captura de `wavesurfer` en la que se vea con claridad la señal temporal, el contorno de
   potencia y la tasa de cruces por cero, junto con el etiquetado manual de los segmentos.
-
+  
+![wavesurfer1](image.png)
 
 - A la vista de la gráfica, indique qué valores considera adecuados para las magnitudes siguientes:
 
 	* Incremento del nivel potencia en dB, respecto al nivel correspondiente al silencio inicial, para
 	  estar seguros de que un segmento de señal se corresponde con voz.
 
+	 	_Vemos que el nivel de potencia del silencio es de unos -10dB, mientras que la media aproximada de la señal de voz está entre 30 y 50 dB aproximadamente. Por tanto, y para ser cautelosos, podríamos fijar un umbral en 10dB._
+
 	* Duración mínima razonable de los segmentos de voz y silencio.
+
+		_Vemos que en nuestro fragmento de voz, la trama de voz más corta es de 254 ms aproximadamente. Por tanto, como mínimo deberíamos tener fragmentos de unos 200 ms de voz o silencio para considerarlos como tal._
 
 	* ¿Es capaz de sacar alguna conclusión a partir de la evolución de la tasa de cruces por cero?
 
+		_La gráfica de la tasa de cruces por cero nos da información sobre si la señal es voz o silencio. Cuando la tasa de cruces es elevada, estamos en un fragmento de voz. Por el contrario, estamos en un fragmento de silencio._
 
 ### Desarrollo del detector de actividad vocal
 
 - Complete el código de los ficheros de la práctica para implementar un detector de actividad vocal en
   tiempo real tan exacto como sea posible. Tome como objetivo la maximización de la puntuación-F `TOTAL`.
 
+![Fscore max.](image-1.png)
+
+
 - Inserte una gráfica en la que se vea con claridad la señal temporal, el etiquetado manual y la detección
   automática conseguida para el fichero grabado al efecto. 
 
+![wavesurfer2](image-3.png)
+
+
+
 - Explique, si existen. las discrepancias entre el etiquetado manual y la detección automática.
+
+	_En la gráfica anterior se pueden observar algunas discrepancias. En general todos los fragmentos etiquetados como voz o silencio en los dos casos son muy parecidos. Hay algun conflicto al final y al principio de alguna trama de voz. La detección automática detecta V|S|V al final de la trama(falsos silencios)._
 
 - Evalúe los resultados sobre la base de datos `db.v4` con el script `vad_evaluation.pl` e inserte a 
   continuación las tasas de sensibilidad (*recall*) y precisión para el conjunto de la base de datos (sólo
   el resumen).
 
+![summary](image-2.png)
+
+
+
+
+_Obtenemos un Fscore medio de todas las imagenes de 89,287%._
 
 ### Trabajos de ampliación
 
@@ -175,6 +196,7 @@ Ejercicios
 - Si ha usado `docopt_c` para realizar la gestión de las opciones y argumentos del programa `vad`, inserte
   una captura de pantalla en la que se vea el mensaje de ayuda del programa.
 
+![mensaje--help](image-4.png)
 
 ### Contribuciones adicionales y/o comentarios acerca de la práctica
 
